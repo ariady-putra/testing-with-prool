@@ -1,4 +1,8 @@
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 1440
+minimumReleaseAge: 1440
 allowBuilds:
-  esbuild: false
-  msgpackr-extract: false
-  protobufjs: false
+  esbuild: true
+  msgpackr-extract: true
+  protobufjs: true

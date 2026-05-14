@@ -5,6 +5,6 @@ config();
 
 export default defineConfig({
   test: {
-    testTimeout: 72_000, // 72 seconds
+    testTimeout: 60_000, // 60 seconds
   },
 });
