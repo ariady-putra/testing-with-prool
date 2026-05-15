@@ -1,15 +1,13 @@
 import { expect, describe } from "vitest";
 
-import { createPublicClient, encodePacked, Hex, http, keccak256, walletActions } from "viem";
+import { Address, createPublicClient, encodePacked, Hex, http, keccak256, walletActions } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { SmartAccount } from "viem/account-abstraction";
 import { foundry } from "viem/chains";
 
 import { createSmartAccountClient } from "permissionless";
 import { getMEEVersion, MEEVersion, toNexusAccount } from "@biconomy/abstractjs";
-import { toNexusSmartAccount } from "permissionless/accounts";
 import { createPimlicoClient } from "permissionless/clients/pimlico";
-import { erc7579Actions, InstallModuleParameters } from "permissionless/actions/erc7579";
+import { erc7579Actions } from "permissionless/actions/erc7579";
 
 import { pk } from "../utils/getInstances";
 import { testWithRpc } from "../utils/testWithRpc";
@@ -17,6 +15,10 @@ import { Action, encodeBatch, encodeExecuteBatch, encodeExecuteSingle, encodeMod
 import { CALLTYPE } from "../erc7579/calltype";
 import { EXECTYPE } from "../erc7579/exectype";
 import CounterExecutorModuleJSON from "../CounterExecutorModule.json";
+const CounterExecutorModule = {
+  ...CounterExecutorModuleJSON,
+  address: "0x6f77567101a95077E14e5E6eAB27214B6a9B556F" as Address,
+};
 
 describe("ERC-7579 test cases", () => {
   testWithRpc("Can execute single", async ({ rpc }) => {
@@ -36,12 +38,6 @@ describe("ERC-7579 test cases", () => {
     const privateKey = generatePrivateKey();
     const owner = privateKeyToAccount(privateKey);
 
-    const counterExecutorModule: InstallModuleParameters<SmartAccount> = {
-      type: "executor",
-      address: "0x402A5947e74A234728fce825740D375Da4C80064",
-      context: owner.address as Hex,
-    };
-
     // const account = await toNexusSmartAccount({
     //   client: publicClient,
     //   owners: [owner],
@@ -55,8 +51,8 @@ describe("ERC-7579 test cases", () => {
         version: getMEEVersion(MEEVersion.V3_0_0),
       },
       executors: [{
-        module: counterExecutorModule.address,
-        data: counterExecutorModule.context,
+        module: CounterExecutorModule.address,
+        data: owner.address as Hex,
       }],
     });
 
@@ -73,16 +69,11 @@ describe("ERC-7579 test cases", () => {
       erc7579Actions()
     );
 
-    const CounterExecutor = {
-      ...CounterExecutorModuleJSON,
-      module: counterExecutorModule,
-    };
-
     const incrementCount: Action = {
-      target: CounterExecutor.module.address,
+      target: CounterExecutorModule.address,
       value: 0n,
       data: {
-        abi: CounterExecutor.abi,
+        abi: CounterExecutorModule.abi,
         functionName: "incrementCount",
       },
     };
@@ -102,13 +93,13 @@ describe("ERC-7579 test cases", () => {
     const executeIncrementCountFromExecutorArgs = {
       account: account.address,
       salt: await publicClient.readContract({
-        address: CounterExecutor.module.address,
-        abi: CounterExecutor.abi,
+        address: CounterExecutorModule.address,
+        abi: CounterExecutorModule.abi,
         functionName: "getSalt",
         args: [owner.address],
       }) as Hex,
       mode: encodeMode(CALLTYPE.SINGLE, EXECTYPE.DEFAULT),
-      module: CounterExecutor.module.address,
+      module: CounterExecutorModule.address,
       action: encodeSingle(incrementCount),
       signature: "0x" as Hex,
     };
@@ -131,8 +122,8 @@ describe("ERC-7579 test cases", () => {
     });
 
     const { request: executeIncrementCountFromExecutor } = await publicClient.simulateContract({
-      address: CounterExecutor.module.address,
-      abi: CounterExecutor.abi,
+      address: CounterExecutorModule.address,
+      abi: CounterExecutorModule.abi,
       functionName: "execute",
       args: [
         executeIncrementCountFromExecutorArgs.account,
@@ -178,12 +169,6 @@ describe("ERC-7579 test cases", () => {
     const privateKey = generatePrivateKey();
     const owner = privateKeyToAccount(privateKey);
 
-    const counterExecutorModule: InstallModuleParameters<SmartAccount> = {
-      type: "executor",
-      address: "0x402A5947e74A234728fce825740D375Da4C80064",
-      context: owner.address as Hex,
-    };
-
     // const account = await toNexusSmartAccount({
     //   client: publicClient,
     //   owners: [owner],
@@ -197,8 +182,8 @@ describe("ERC-7579 test cases", () => {
         version: getMEEVersion(MEEVersion.V3_0_0),
       },
       executors: [{
-        module: counterExecutorModule.address,
-        data: counterExecutorModule.context,
+        module: CounterExecutorModule.address,
+        data: owner.address as Hex,
       }],
     });
 
@@ -215,16 +200,11 @@ describe("ERC-7579 test cases", () => {
       erc7579Actions()
     );
 
-    const CounterExecutor = {
-      ...CounterExecutorModuleJSON,
-      module: counterExecutorModule,
-    };
-
     const incrementCount: Action = {
-      target: CounterExecutor.module.address,
+      target: CounterExecutorModule.address,
       value: 0n,
       data: {
-        abi: CounterExecutor.abi,
+        abi: CounterExecutorModule.abi,
         functionName: "incrementCount",
       },
     };
@@ -244,13 +224,13 @@ describe("ERC-7579 test cases", () => {
     const batchExecuteIncrementCountFromExecutorArgs = {
       account: account.address,
       salt: await publicClient.readContract({
-        address: CounterExecutor.module.address,
-        abi: CounterExecutor.abi,
+        address: CounterExecutorModule.address,
+        abi: CounterExecutorModule.abi,
         functionName: "getSalt",
         args: [owner.address],
       }) as Hex,
       mode: encodeMode(CALLTYPE.BATCH, EXECTYPE.DEFAULT),
-      module: CounterExecutor.module.address,
+      module: CounterExecutorModule.address,
       action: encodeBatch([incrementCount, incrementCount, incrementCount]),
       signature: "0x" as Hex,
     };
@@ -273,8 +253,8 @@ describe("ERC-7579 test cases", () => {
     });
 
     const { request: batchExecuteIncrementCountFromExecutor } = await publicClient.simulateContract({
-      address: CounterExecutor.module.address,
-      abi: CounterExecutor.abi,
+      address: CounterExecutorModule.address,
+      abi: CounterExecutorModule.abi,
       functionName: "execute",
       args: [
         batchExecuteIncrementCountFromExecutorArgs.account,
