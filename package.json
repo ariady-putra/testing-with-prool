@@ -3,16 +3,16 @@
     "@biconomy/abstractjs": "^1.2.3",
     "@pimlico/alto": "^0.0.19",
     "@pimlico/mock-paymaster": "^0.0.5",
-    "get-port": "^7.1.0",
-    "permissionless": "^0.2.52",
+    "get-port": "^7.2.0",
+    "permissionless": "^0.2.57",
     "prool": "^0.0.24",
-    "viem": "^2.33.1"
+    "viem": "^2.49.2"
   },
   "scripts": {
     "test": "vitest"
   },
   "devDependencies": {
-    "dotenv": "^16",
+    "dotenv": "^16.6.1",
     "vitest": "^3.2.4"
   }
 }

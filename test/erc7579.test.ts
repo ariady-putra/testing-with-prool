@@ -91,7 +91,7 @@ describe("ERC-7579 test cases", () => {
     const admin = privateKeyToAccount(pk[pk.length - 1]);
 
     const executeIncrementCountFromExecutorArgs = {
-      account: account.address,
+      account: account.address as Address,
       salt: await publicClient.readContract({
         address: CounterExecutorModule.address,
         abi: CounterExecutorModule.abi,
@@ -222,7 +222,7 @@ describe("ERC-7579 test cases", () => {
     const admin = privateKeyToAccount(pk[pk.length - 1]);
 
     const batchExecuteIncrementCountFromExecutorArgs = {
-      account: account.address,
+      account: account.address as Address,
       salt: await publicClient.readContract({
         address: CounterExecutorModule.address,
         abi: CounterExecutorModule.abi,
