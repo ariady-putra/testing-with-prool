@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@biconomy/abstractjs": "^1.2.3",
+    "@biconomy/abstractjs": "^1.2.4",
     "@pimlico/alto": "^0.0.19",
     "@pimlico/mock-paymaster": "^0.0.5",
     "get-port": "^7.2.0",
     "permissionless": "^0.2.57",
     "prool": "^0.0.24",
-    "viem": "^2.49.2"
+    "viem": "^2.51.3"
   },
   "scripts": {
     "test": "vitest"
